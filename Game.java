@@ -22,6 +22,8 @@ public class Game extends JComponent implements KeyListener {
 	private int dy = 0;
 	private Image image;
 	private long lastAsteroidSpawnTime = 0; 
+	private LinkedList<Asteroid> asteroids = new LinkedList<>();
+    private int numberofiterations = 0;
 	
 	public Game() {
 		setPreferredSize(new Dimension(800, 640));
@@ -49,6 +51,11 @@ public class Game extends JComponent implements KeyListener {
 		
 		g.setColor(Color.WHITE);
 		g.fillRect(coordX, coordY, 20, 20); 
+
+		for (Asteroid asteroid: asteroids) {
+			g.setColor(Color.WHITE);
+			g.fillOval(asteroid.getXcoord(), asteroid.getYcoord(), asteroid.getWidth(), asteroid.getHeight());
+		}
 	}
 
 	/* 
@@ -66,16 +73,56 @@ public class Game extends JComponent implements KeyListener {
 		public void run() {
 			while (alive) {
 				charmove();
+                createAsteroid();
+                for (Asteroid asteroid: asteroids) {
+                    asteroid.moveAsteroid();
+                }
 				repaint();
+				try {
+					Thread.sleep(16);
+				} catch (InterruptedException  e) {
+					e.printStackTrace();
+				}
+                numberofiterations += 1;
 			}
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException  e) {
-                e.printStackTrace();
-            }
 		}
 	}
 
+	public class Asteroid {
+		private int xcoord = 0;
+		private int ycoord;
+		private int width;
+		private int height;
+
+		public Asteroid() {
+			boolean numberTaken = false;
+			Random random = new Random();
+			this.xcoord = random.nextInt(750);
+			this.ycoord = 0;
+			this.width = random.nextInt(100) + 50;
+			this.height = width;
+		}
+
+		public void moveAsteroid() {
+			ycoord += 1;
+		}
+
+		public int getXcoord() {
+			return this.xcoord;
+		}
+
+		public int getYcoord() {
+			return this.ycoord;
+		}
+
+		public int getWidth() {
+			return this.width;
+		}
+
+		public int getHeight() {
+			return this.height;
+		}
+	}
 	
 	@Override
 	public void keyTyped(KeyEvent e) {}
@@ -106,6 +153,30 @@ public class Game extends JComponent implements KeyListener {
 		dx = 0;
 		dy = 0;
 	}
+
+	public int randomxcoord() {
+		Random random = new Random();
+		return random.nextInt(800);
+	}
+
+	public void createAsteroid() {
+		long currentTime = System.currentTimeMillis();
+        long elapsedTime = currentTime - lastAsteroidSpawnTime;
+        
+        
+        int spawnDelay = 2000 - (int)(numberofiterations * 0.01); // MODIFY THE TIME LATER
+        System.out.println(spawnDelay);
+
+        if (elapsedTime > spawnDelay) {
+            asteroids.add(new Asteroid());
+            lastAsteroidSpawnTime = currentTime;
+        }
+	}
+
+	public void removeAsteroid() {
+
+	}
+	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
 			JFrame frame = new JFrame("Asteroid");
