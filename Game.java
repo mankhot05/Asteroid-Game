@@ -19,10 +19,12 @@ public class Game extends JComponent implements KeyListener {
 	private int dx = 0;
 	private int dy = 0;
 	private Image image;
-	private long lastAsteroidSpawnTime = 0; 
+	private long lastAsteroidSpawnTime = 0;
+	private double time = 0.01; 
 	private LinkedList<Asteroid> asteroids = new LinkedList<>();
 	private LinkedList<Shot> shots = new LinkedList<>();
     private int numberofiterations = 0;
+	private int points = 0;
 	
 	public Game() {
 		setPreferredSize(new Dimension(800, 640));
@@ -94,6 +96,7 @@ public class Game extends JComponent implements KeyListener {
 					asteroid = iterator.next();
 					if(asteroid.isMarked()) {
 						iterator.remove();
+						points += 100;
 					}
 				}
 
@@ -244,9 +247,8 @@ public class Game extends JComponent implements KeyListener {
 		long currentTime = System.currentTimeMillis();
         long elapsedTime = currentTime - lastAsteroidSpawnTime;
         
-        
-        int spawnDelay = 2000 - (int)(numberofiterations * 0.01); // MODIFY THE TIME LATER
-        System.out.println(spawnDelay);
+        int spawnDelay = 2000; 
+        System.out.println(time);
 
         if (elapsedTime > spawnDelay) {
             asteroids.add(new Asteroid());
