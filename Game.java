@@ -16,13 +16,12 @@ public class Game extends JComponent implements KeyListener {
 
 	private int coordX = 390;
 	private int coordY = 500;
-	private int ascoordY = 0;
-	private int ascoordX = 0;
 	private int dx = 0;
 	private int dy = 0;
 	private Image image;
 	private long lastAsteroidSpawnTime = 0; 
 	private LinkedList<Asteroid> asteroids = new LinkedList<>();
+	private LinkedList<Shot> shots = new LinkedList<>();
     private int numberofiterations = 0;
 	
 	public Game() {
@@ -56,6 +55,11 @@ public class Game extends JComponent implements KeyListener {
 			g.setColor(Color.WHITE);
 			g.fillOval(asteroid.getXcoord(), asteroid.getYcoord(), asteroid.getWidth(), asteroid.getHeight());
 		}
+
+		for (Shot shot: shots) {
+			g.setColor(Color.WHITE);
+			g.fillRect(shot.getXCoordShot(), shot.getYCoordShot(), 5, 10);
+		}
 	}
 
 	/* 
@@ -73,6 +77,7 @@ public class Game extends JComponent implements KeyListener {
 		public void run() {
 			while (alive) {
 				charmove();
+				shotsmove();
                 createAsteroid();
                 for (Asteroid asteroid: asteroids) {
                     asteroid.moveAsteroid();
@@ -123,6 +128,29 @@ public class Game extends JComponent implements KeyListener {
 			return this.height;
 		}
 	}
+
+	public class Shot {
+
+		private int xcoord;
+		private int ycoord = coordY;
+
+		public Shot(int xcoord) {
+			this.xcoord = xcoord;
+			repaint();
+		}
+
+		public int getXCoordShot() {
+			return xcoord;
+		}
+
+		public void setYCoordShot(int y) {
+			ycoord = y;
+		}
+
+		public int getYCoordShot() {
+			return ycoord;
+		}
+	}
 	
 	@Override
 	public void keyTyped(KeyEvent e) {}
@@ -145,6 +173,9 @@ public class Game extends JComponent implements KeyListener {
 		else if (key == KeyEvent.VK_DOWN) {
 			dy += 15;
 		}
+		else if (key == KeyEvent.VK_SPACE) {
+			shots.add(new Shot(coordX));
+		}
 	}
 	
 	public void charmove() {
@@ -152,6 +183,12 @@ public class Game extends JComponent implements KeyListener {
 		coordY += dy;
 		dx = 0;
 		dy = 0;
+	}
+
+	public void shotsmove() {
+		for (Shot shot: shots) {
+			shot.setYCoordShot(shot.getYCoordShot() - 5);
+		}
 	}
 
 	public int randomxcoord() {
@@ -174,7 +211,7 @@ public class Game extends JComponent implements KeyListener {
 	}
 
 	public void removeAsteroid() {
-
+		//implement after collisions
 	}
 	
 	public static void main(String[] args) {
