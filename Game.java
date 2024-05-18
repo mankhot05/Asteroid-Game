@@ -82,7 +82,33 @@ public class Game extends JComponent implements KeyListener {
                 for (Asteroid asteroid: asteroids) {
                     asteroid.moveAsteroid();
                 }
+				for (Asteroid asteroid: asteroids) {
+					for (Shot shot: shots) {
+						collision(asteroid, shot);
+					}
+				}
+
+				Iterator<Asteroid> iterator = asteroids.iterator();
+				Asteroid asteroid;
+				while(iterator.hasNext()) {
+					asteroid = iterator.next();
+					if(asteroid.isMarked()) {
+						iterator.remove();
+					}
+				}
+
+				Iterator<Shot> iteratorshot = shots.iterator();
+				Shot shot;
+				while(iteratorshot.hasNext()) {
+					shot = iteratorshot.next();
+					if (shot.isMarked()) {
+						iteratorshot.remove();
+					}
+				}
+
 				repaint();
+
+
 				try {
 					Thread.sleep(16);
 				} catch (InterruptedException  e) {
@@ -98,13 +124,14 @@ public class Game extends JComponent implements KeyListener {
 		private int ycoord;
 		private int width;
 		private int height;
+		private boolean remove;
 
 		public Asteroid() {
 			boolean numberTaken = false;
 			Random random = new Random();
 			this.xcoord = random.nextInt(750);
 			this.ycoord = 0;
-			this.width = random.nextInt(100) + 50;
+			this.width = random.nextInt(65) + 25;
 			this.height = width;
 		}
 
@@ -127,12 +154,21 @@ public class Game extends JComponent implements KeyListener {
 		public int getHeight() {
 			return this.height;
 		}
+
+		public void setMarked(boolean mark) {
+			remove = mark;
+		}
+
+		public boolean isMarked() {
+			return remove;
+		}
 	}
 
 	public class Shot {
 
 		private int xcoord;
 		private int ycoord = coordY;
+		private boolean remove;
 
 		public Shot(int xcoord) {
 			this.xcoord = xcoord;
@@ -149,6 +185,14 @@ public class Game extends JComponent implements KeyListener {
 
 		public int getYCoordShot() {
 			return ycoord;
+		}
+
+		public void setMarked(boolean mark) {
+			remove = mark;
+		}
+
+		public boolean isMarked() {
+			return remove;
 		}
 	}
 	
@@ -210,8 +254,24 @@ public class Game extends JComponent implements KeyListener {
         }
 	}
 
-	public void removeAsteroid() {
-		//implement after collisions
+	public void collision(Asteroid asteroid, Shot shot) {
+		int asteroidLeft = asteroid.getXcoord();
+		int asteroidRight = asteroid.getXcoord() + asteroid.getWidth();
+		int asteroidTop = asteroid.getYcoord();
+		int asteroidBottom = asteroid.getYcoord() + asteroid.getHeight();
+
+		int shotLeft = shot.getXCoordShot();
+		int shotRight = shot.getXCoordShot() + 5; 
+		int shotTop = shot.getYCoordShot();
+		int shotBottom = shot.getYCoordShot() + 10; 
+
+		boolean collisionX = shotRight >= asteroidLeft && shotLeft <= asteroidRight;
+		boolean collisionY = shotBottom >= asteroidTop && shotTop <= asteroidBottom;
+
+		if (collisionX && collisionY) {
+			asteroid.setMarked(true);
+			shot.setMarked(true);
+		}
 	}
 	
 	public static void main(String[] args) {
