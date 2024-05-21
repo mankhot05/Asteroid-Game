@@ -25,6 +25,8 @@ public class Game extends JComponent implements KeyListener {
 	private LinkedList<Shot> shots = new LinkedList<>();
     private int numberofiterations = 0;
 	private int points = 0;
+	private boolean printGameOver = false;
+	private static JFrame frame;
 	
 	public Game() {
 		setPreferredSize(new Dimension(800, 640));
@@ -62,6 +64,12 @@ public class Game extends JComponent implements KeyListener {
 			g.setColor(Color.WHITE);
 			g.fillRect(shot.getXCoordShot(), shot.getYCoordShot(), 5, 10);
 		}
+
+		if (printGameOver) {
+			g.setColor(Color.RED);
+            g.setFont(new Font("Arial", Font.BOLD, 50));
+            g.drawString("Game Over", getWidth() / 2 - 150, getHeight() / 2);
+		}
 	}
 
 	/* 
@@ -90,6 +98,34 @@ public class Game extends JComponent implements KeyListener {
 					}
 				}
 
+				// Game over checkers
+				for (Asteroid asteroid: asteroids) {
+
+					int asteroidLeft = asteroid.getXcoord();
+					int asteroidRight = asteroid.getXcoord() + asteroid.getWidth();
+					int asteroidTop = asteroid.getYcoord();
+					int asteroidBottom = asteroid.getYcoord() + asteroid.getHeight();
+
+					int charLeft = coordX;
+					int charRight = coordX + 20; 
+					int charTop = coordY;
+					int charBottom = coordY + 20; 
+
+					boolean collisionX = charRight >= asteroidLeft && charLeft <= asteroidRight;
+					boolean collisionY = charBottom >= asteroidTop && charTop <= asteroidBottom;
+
+					if (asteroid.getYcoord() == 640) {
+						alive = false;
+						printGameOver = true;
+					}
+					else if (collisionX && collisionY) {
+						alive = false;
+						printGameOver = true;
+					}
+				}
+				
+
+				// Removing asteroids and shots after collision
 				Iterator<Asteroid> iterator = asteroids.iterator();
 				Asteroid asteroid;
 				while(iterator.hasNext()) {
@@ -278,7 +314,7 @@ public class Game extends JComponent implements KeyListener {
 	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> {
-			JFrame frame = new JFrame("Asteroid");
+			frame = new JFrame("Asteroid");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.getContentPane().add(new Game());
             frame.pack();
