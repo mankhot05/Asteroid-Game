@@ -40,24 +40,27 @@ public class Game extends JComponent implements KeyListener {
 	}
 	
 	public void paintComponent(Graphics g) {
-		/* 
+		
 		loadImage();
-		*/
+	
 		super.paintComponent(g);
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-		/* 
+		
 		Graphics2D graphics = (Graphics2D) g;
 		graphics.drawImage(image, coordX, coordY, this);
-		*/
 		
+		/* 
 		g.setColor(Color.WHITE);
 		g.fillRect(coordX, coordY, 20, 20); 
+		*/
 
 		for (Asteroid asteroid: asteroids) {
+			
 			g.setColor(Color.WHITE);
 			g.fillOval(asteroid.getXcoord(), asteroid.getYcoord(), asteroid.getWidth(), asteroid.getHeight());
+			
 		}
 
 		for (Shot shot: shots) {
@@ -72,13 +75,11 @@ public class Game extends JComponent implements KeyListener {
 		}
 	}
 
-	/* 
+	
 	public void loadImage() {
 		ImageIcon imageicon = new ImageIcon("C:\\Users\\mvenk\\OneDrive\\Desktop\\Visual Studio Code\\Asteroid Game\\resources\\spaceship image.png");
 		image = imageicon.getImage();
 	}
-	*/
-	
 	public class GameLogic implements Runnable {
 
 		private boolean alive = true;
