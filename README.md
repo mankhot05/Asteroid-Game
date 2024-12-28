@@ -17,3 +17,11 @@
 > Compile and run the Game class using the following commands:
 >   javac Game.java
 >   java Game
+
+**Development Notes**
+> Graphics: the game uses Graphics2D for rendering the spaceship and asteroids.
+> Asteroid Logic: New asteroids spawn every second at random horizontal positions, and they move downward at a fixed speed.
+> Threading: The game logic runs on a seperate thread to ensure smooth gameplay.
+
+**License**
+This project is open-source and available under the MIT license.
